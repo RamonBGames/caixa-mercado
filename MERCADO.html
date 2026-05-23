@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUPERMERCADOS Avenida</title>
+
+<style>
+
+body{
+  margin:0;
+  font-family:Arial;
+  background:#061427;
+  color:white;
+}
+
+.topo{
+  background:linear-gradient(90deg,#0047ff,#00a2ff);
+  padding:15px 25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+.logo{
+  font-size:32px;
+  font-weight:bold;
+}
+
+.hora{
+  background:#001d52;
+  padding:12px 20px;
+  border-radius:15px;
+  font-size:22px;
+}
+
+.container{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:20px;
+  padding:20px;
+}
+
+.caixa{
+  background:#10294f;
+  border-radius:25px;
+  padding:20px;
+}
+
+.entrada{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+input{
+  flex:1;
+  padding:18px;
+  border:none;
+  border-radius:15px;
+  font-size:18px;
+}
+
+button{
+  border:none;
+  border-radius:15px;
+  padding:15px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  color:white;
+}
+
+.adicionar{
+  background:linear-gradient(90deg,#0066ff,#00b7ff);
+}
+
+.adicionar:hover{
+  opacity:0.9;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th{
+  background:#0077ff;
+}
+
+th,td{
+  padding:16px;
+  text-align:left;
+}
+
+tr{
+  background:#173b73;
+}
+
+tr:nth-child(even){
+  background:#21498a;
+}
+
+.total-area{
+  background:#0d2344;
+  border-radius:25px;
+  padding:20px;
+}
+
+.display{
+  background:black;
+  color:#00ff99;
+  padding:35px;
+  border-radius:20px;
+  text-align:center;
+  font-size:45px;
+  font-weight:bold;
+  font-family:monospace;
+  margin-bottom:20px;
+}
+
+.info{
+  line-height:35px;
+  color:#bddcff;
+}
+
+.pagamentos{
+  display:grid;
+  gap:10px;
+  margin-top:20px;
+}
+
+.credito{
+  background:#0066ff;
+}
+
+.debito{
+  background:#008cff;
+}
+
+.pix{
+  background:#00aaff;
+}
+
+.dinheiro{
+  background:#00c3ff;
+}
+
+.cancelar{
+  background:#ff3d3d;
+}
+
+.produtos{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-top:20px;
+}
+
+.produto-btn{
+  background:#1a427d;
+  padding:15px;
+  border-radius:15px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.produto-btn:hover{
+  background:#2b63b8;
+}
+
+.cupom{
+  margin-top:20px;
+  background:white;
+  color:black;
+  padding:15px;
+  border-radius:15px;
+  font-family:monospace;
+  max-height:250px;
+  overflow:auto;
+}
+
+.scanner{
+  height:6px;
+  background:#00ffff;
+  margin-top:15px;
+  border-radius:10px;
+  animation:scan 1s infinite alternate;
+}
+
+@keyframes scan{
+  from{
+    opacity:0.3;
+  }
+
+  to{
+    opacity:1;
+    box-shadow:0 0 20px cyan;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div class="topo">
+
+<div class="logo">
+SUPERMERCADOS AVENIDA
+</div>
+
+<div class="hora" id="hora"></div>
+
+</div>
+
+<div class="container">
+
+<div class="caixa">
+
+<div class="entrada">
+
+<input
+id="produto"
+type="text"
+placeholder="Digite ou escaneie o produto"
+>
+
+<button
+class="adicionar"
+onclick="adicionar()"
+>
+ADICIONAR
+</button>
+
+</div>
+
+<div class="scanner"></div>
+
+<table>
+
+<thead>
+<tr>
+<th>Produto</th>
+<th>Preço</th>
+<th>Qtd</th>
+</tr>
+</thead>
+
+<tbody id="lista"></tbody>
+
+</table>
+
+<div class="produtos">
+
+<div
+class="produto-btn"
+onclick="rapido('Arroz',25)"
+>
+Arroz
+<br>
+R$25
+</div>
+
+<div
+class="produto-btn"
+onclick="rapido('Feijão',9)"
+>
+Feijão
+<br>
+R$9
+</div>
+
+<div
+class="produto-btn"
+onclick="rapido('Refrigerante',12)"
+>
+Refri
+<br>
+R$12
+</div>
+
+<div
+class="produto-btn"
+onclick="rapido('Chocolate',7)"
+>
+Chocolate
+<br>
+R$7
+</div>
+
+</div>
+
+<div class="cupom" id="cupom">
+CUPOM FISCAL<br>
+-------------------------<br>
+</div>
+
+</div>
+
+<div class="total-area">
+
+<h2>TOTAL</h2>
+
+<div class="display" id="total">
+R$ 0.00
+</div>
+
+<div class="info">
+Operador: CAIXA 01<br>
+Loja: SUPERMERCADO AVENIDA<br>
+Status: ONLINE<br>
+CPF NA NOTA: NÃO INFORMADO
+</div>
+
+<div class="pagamentos">
+
+<button
+class="credito"
+onclick="pagar('CRÉDITO')"
+>
+CRÉDITO
+</button>
+
+<button
+class="debito"
+onclick="pagar('DÉBITO')"
+>
+DÉBITO
+</button>
+
+<button
+class="pix"
+onclick="pagar('PIX')"
+>
+PIX
+</button>
+
+<button
+class="dinheiro"
+onclick="pagar('DINHEIRO')"
+>
+DINHEIRO
+</button>
+
+<button
+class="cancelar"
+onclick="cancelarCompra()"
+>
+CANCELAR COMPRA
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let total = 0;
+
+function adicionar(){
+
+  const nome =
+    document
+    .getElementById("produto")
+    .value;
+
+  if(nome === ""){
+    alert("Digite um produto");
+    return;
+  }
+
+  const preco =
+    Math.floor(Math.random()*50)+1;
+
+  adicionarTabela(nome,preco);
+
+  document
+    .getElementById("produto")
+    .value = "";
+
+}
+
+function rapido(nome,preco){
+
+  adicionarTabela(nome,preco);
+
+}
+
+function beep(){
+
+  const audio = new Audio(
+    "https://actions.google.com/sounds/v1/cartoon/beep_short.ogg"
+  );
+
+  audio.volume = 0.5;
+
+  audio.play();
+
+}
+
+function adicionarTabela(nome,preco){
+
+  const lista =
+    document
+    .getElementById("lista");
+
+  const linha =
+    "<tr>" +
+    "<td>" + nome + "</td>" +
+    "<td>R$ " + preco.toFixed(2) + "</td>" +
+    "<td>1</td>" +
+    "</tr>";
+
+  lista.innerHTML += linha;
+
+  total += preco;
+
+  document
+    .getElementById("total")
+    .innerText =
+    "R$ " + total.toFixed(2);
+
+  const cupom =
+    document
+    .getElementById("cupom");
+
+  beep();
+
+  cupom.innerHTML +=
+    nome +
+    " - R$ " +
+    preco.toFixed(2) +
+    "<br>";
+
+}
+
+function pagar(tipo){
+
+  if(total <= 0){
+    alert("Nenhum produto!");
+    return;
+  }
+
+  const confirmar =
+    confirm(
+      "Confirmar pagamento em " +
+      tipo +
+      "?"
+    );
+
+  if(confirmar){
+
+    alert(
+      "Pagamento aprovado em " +
+      tipo
+    );
+
+    document
+      .getElementById("cupom")
+      .innerHTML +=
+      "-------------------------<br>" +
+      "TOTAL: R$ " +
+      total.toFixed(2) +
+      "<br>PAGO EM: " +
+      tipo;
+
+    setTimeout(function(){
+
+      cancelarCompra();
+
+    },3000);
+
+  }else{
+
+    alert("Pagamento cancelado");
+
+  }
+
+}
+
+function cancelarCompra(){
+
+  document
+    .getElementById("lista")
+    .innerHTML = "";
+
+  document
+    .getElementById("cupom")
+    .innerHTML =
+    "CUPOM FISCAL<br>-------------------------<br>";
+
+  total = 0;
+
+  document
+    .getElementById("total")
+    .innerText =
+    "R$ 0.00";
+
+}
+
+function atualizarHora(){
+
+  const agora =
+    new Date();
+
+  document
+    .getElementById("hora")
+    .innerText =
+    agora.toLocaleTimeString("pt-BR");
+
+}
+
+setInterval(atualizarHora,1000);
+
+atualizarHora();
+
+document
+  .getElementById("produto")
+  .addEventListener(
+    "keydown",
+    function(event){
+
+      if(event.key === "Enter"){
+
+        adicionar();
+
+      }
+
+    }
+  );
+
+</script>
+
+</body>
+</html>
